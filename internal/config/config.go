@@ -2,20 +2,21 @@ package config
 
 import (
 	"errors"
-	"github.com/sirupsen/logrus"
-	"time"
-
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
+	"sync"
 )
 
 type Config struct {
-	Power          uint16        `json:"power"`
-	Addition       time.Duration `json:"time_addition_ms"`
-	Subtraction    time.Duration `json:"time_subtraction_ms"`
-	Multiplication time.Duration `json:"time_multiplications_ms"`
-	Division       time.Duration `json:"time_divisions_ms"`
+	Sem  chan struct{}
+	Wg   sync.WaitGroup
+	port uint16
+}
+
+func (c *Config) GetURL() string {
+	return fmt.Sprintf("http://localhost:%d/internal/task", c.port)
 }
 
 // CustomFormatter определяет свой собственный формат вывода для логгера
@@ -31,17 +32,14 @@ func (f *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 }
 
 // LoadConfig принимает порт для сервера и длительность математических операций и возвращает конфиг
-func LoadConfig(power, addition, subtraction, multiplication, division int) (*Config, error) {
-	if addition <= 0 || subtraction <= 0 || multiplication <= 0 || division <= 0 || power <= 0 {
-		return nil, errors.New("invalid duration, change configuration")
+func LoadConfig(port, power uint16) (*Config, error) {
+	if power <= 0 {
+		return nil, errors.New("invalid power, change configuration")
 	}
 
 	return &Config{
-		Power:          uint16(power),
-		Addition:       time.Millisecond * time.Duration(addition),
-		Subtraction:    time.Millisecond * time.Duration(subtraction),
-		Multiplication: time.Millisecond * time.Duration(multiplication),
-		Division:       time.Millisecond * time.Duration(division),
+		Sem:  make(chan struct{}, power),
+		port: port,
 	}, nil
 }
 
