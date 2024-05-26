@@ -10,16 +10,15 @@ func main() {
 	const (
 		COMPUTING_POWER = 5
 		PORT            = 8080
+		DEBUG_LEVEL     = true
 	)
 
-	logger := config.LoadLogger()
-	// Загрузка конфигурации
-	cfg, err := config.LoadConfig(PORT, COMPUTING_POWER)
+	logger := config.LoadLogger(DEBUG_LEVEL)             // Загрузка логгера
+	cfg, err := config.LoadConfig(PORT, COMPUTING_POWER) // Загрузка конфигурации
 	if err != nil {
 		logger.Fatalf("Could not load config: %s\n", err.Error())
 		return
 	}
-	// новый service
-	srv := service.New(cfg, logger)
-	app.Run(srv)
+	srv := service.New(cfg, logger) // новый service
+	app.Run(srv)                    // запуск приложения
 }
