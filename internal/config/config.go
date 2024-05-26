@@ -32,7 +32,7 @@ func (f *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 }
 
 // LoadConfig принимает порт для сервера и длительность математических операций и возвращает конфиг
-func LoadConfig(port, power uint16) (*Config, error) {
+func LoadConfig(port uint16, power uint) (*Config, error) {
 	if power <= 0 {
 		return nil, errors.New("invalid power, change configuration")
 	}

@@ -4,17 +4,22 @@ import (
 	"agentYL/internal/app"
 	"agentYL/internal/config"
 	"agentYL/internal/service"
+	"flag"
 )
 
 func main() {
 	const (
-		COMPUTING_POWER = 5
-		PORT            = 8080
-		DEBUG_LEVEL     = true
+		PORT = 8080
 	)
 
-	logger := config.LoadLogger(DEBUG_LEVEL)             // Загрузка логгера
-	cfg, err := config.LoadConfig(PORT, COMPUTING_POWER) // Загрузка конфигурации
+	// Определение флагов (подробнее go run cmd/agent/main.go -h)
+	debug := flag.Bool("debug", false, "enable debug level logging")
+	COMPUTING_POWER := flag.Uint("power", 3, "configure computing power")
+
+	flag.Parse() // Парсинг флагов
+
+	logger := config.LoadLogger(*debug)                   // Загрузка логгера
+	cfg, err := config.LoadConfig(PORT, *COMPUTING_POWER) // Загрузка конфигурации
 	if err != nil {
 		logger.Fatalf("Could not load config: %s\n", err.Error())
 		return
