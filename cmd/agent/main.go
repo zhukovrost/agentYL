@@ -1,9 +1,9 @@
 package main
 
 import (
-	"agentYL/internal/app"
-	"agentYL/internal/config"
-	"agentYL/internal/service"
+	"agent/internal/app"
+	"agent/internal/config"
+	"agent/internal/service"
 	"flag"
 )
 

@@ -1,7 +1,7 @@
 package app
 
 import (
-	"agentYL/internal/service"
+	"agent/internal/service"
 	"context"
 	"errors"
 	"os"
@@ -34,15 +34,11 @@ func Run(srv *service.Service) {
 		default:
 			task, err := srv.GetTask()
 			if err != nil {
-				if errors.Is(err, service.NoTaskError) {
-					srv.Logger.Debug("no task")
-					time.Sleep(1 * time.Second) // Подождем перед следующей попыткой
-					continue
-				} else {
+				if !errors.Is(err, service.NoTaskError) {
 					srv.Logger.Errorf("failed to get task: %v", err.Error())
-					time.Sleep(1 * time.Second) // Подождем перед следующей попыткой
-					continue
 				}
+				time.Sleep(1 * time.Second) // Подождем перед следующей попыткой
+				continue
 			}
 
 			srv.Logger.Infof("got new task: %d", task.Id)

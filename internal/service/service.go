@@ -1,7 +1,7 @@
 package service
 
 import (
-	"agentYL/internal/config"
+	"agent/internal/config"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -118,6 +118,8 @@ func (s *Service) Response(id uint, result float64) error {
 	// Проверяем статус ответа
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	} else {
+		s.Logger.Debug("response sent (200)")
 	}
 
 	return nil
