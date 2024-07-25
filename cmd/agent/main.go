@@ -5,6 +5,8 @@ import (
 	"agent/internal/config"
 	"agent/internal/service"
 	"flag"
+	"os"
+	"strconv"
 )
 
 func main() {
@@ -14,12 +16,19 @@ func main() {
 
 	// Определение флагов (подробнее go run cmd/agent/main.go -h)
 	debug := flag.Bool("debug", false, "enable debug level logging")
-	COMPUTING_POWER := flag.Uint("power", 3, "configure computing power")
-
 	flag.Parse() // Парсинг флагов
 
-	logger := config.LoadLogger(*debug)                   // Загрузка логгера
-	cfg, err := config.LoadConfig(PORT, *COMPUTING_POWER) // Загрузка конфигурации
+	powerStr := os.Getenv("COMPUTING_POWER")
+	var power uint
+	power = 3
+	if powerStr != "" {
+		if p, err := strconv.Atoi(powerStr); err == nil {
+			power = uint(p)
+		}
+	}
+
+	logger := config.LoadLogger(*debug)        // Загрузка логгера
+	cfg, err := config.LoadConfig(PORT, power) // Загрузка конфигурации
 	if err != nil {
 		logger.Fatalf("Could not load config: %s\n", err.Error())
 		return
